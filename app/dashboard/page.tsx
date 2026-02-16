@@ -119,91 +119,7 @@ export default function DashboardPage() {
     <div className="min-h-screen flex bg-gray-100">
       <Sidebar />
 
-      <main className="flex-1 p-10 space-y-8">
-
-        {/* HEADER */}
-        <div className="flex justify-between items-center">
-          <div>
-            <h2 className="text-2xl font-bold">
-              IMMILAC Aflao Election 2026
-            </h2>
-            <p className="text-gray-500">Welcome back, {username}</p>
-          </div>
-
-          {electionState === "NOT_STARTED" && (
-            <Badge className="bg-yellow-500 text-white px-4 py-2">
-              Election Not Yet Started
-            </Badge>
-          )}
-
-          {electionState === "OPEN" && (
-            <Badge className="bg-green-600 text-white px-4 py-2">
-              Election Open
-            </Badge>
-          )}
-
-          {electionState === "CLOSED" && (
-            <Badge className="bg-gray-700 text-white px-4 py-2">
-              Election Closed
-            </Badge>
-          )}
-        </div>
-
-        {/* COUNTDOWN CARD */}
-        {countdown && (
-          <Card className="rounded-2xl shadow-md bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
-            <CardContent className="p-6">
-              <p className="text-sm opacity-80">
-                {electionState === "NOT_STARTED"
-                  ? "Starts in"
-                  : "Ends in"}
-              </p>
-              <h3 className="text-2xl font-bold mt-2">{countdown}</h3>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* STATS */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-
-          <Card className="rounded-2xl shadow-md">
-            <CardContent className="p-6">
-              <p className="text-sm text-gray-500">Voting Status</p>
-              <h3 className="text-xl font-bold text-green-600">
-                {loading ? "Loading..." : voted > 0 ? `${voted}/10` : "Not Yet Voted"}
-              </h3>
-            </CardContent>
-          </Card>
-
-        </div>
-
-        {/* MAIN GRID */}
-        <div className="grid grid-cols-2 gap-8">
-
-          <Card className="rounded-2xl shadow-md">
-            <CardContent className="p-8 space-y-6">
-              <h3 className="text-xl font-semibold">Cast Your Vote</h3>
-
-              <p className="text-gray-600">
-                Participate securely in the 2026 election.
-              </p>
-
-              <Button
-                disabled={!canVote}
-                onClick={() => canVote && router.push("/dashboard/ballot")}
-                className={`w-full h-12 text-lg ${
-                  canVote
-                    ? "bg-green-700 hover:bg-green-800"
-                    : "bg-gray-400 cursor-not-allowed"
-                }`}
-              >
-                {canVote ? "Proceed to Ballot" : "Voting Unavailable"}
-              </Button>
-            </CardContent>
-          </Card>
-
-        </div>
-      </main>
+      
       {/* MAIN CONTENT */}
       <main className="flex-1 p-10 space-y-8">
 
@@ -259,7 +175,7 @@ export default function DashboardPage() {
                 Your Polling Station
               </p>
               <h3 className="text-xl font-bold">
-                Accra Central
+                IMMILAC Aflao
               </h3>
             </CardContent>
           </Card>

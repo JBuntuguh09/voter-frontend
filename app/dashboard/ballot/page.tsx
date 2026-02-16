@@ -8,35 +8,84 @@ import {
   CardContent,
 } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import {
-  CheckCircle,
-  User2,
-  AreaChart,
-  TableProperties,
-  Map,
-  Tags,
-  FileCheck,
-  Home,
-  LucideHome,
-} from "lucide-react"
 import { useRouter } from "next/navigation"
 import { Sidebar } from "@/components/layout/sidbar"
 import { Label } from "@/components/ui/label"
 import useRequests from "@/app/utils/UseRequests"
 import { useEffect, useMemo, useState } from "react"
 
+import {
+  User2,
+  ShieldCheck,
+  Wallet,
+  ClipboardPen,
+  Users,
+  Landmark,
+  UserPlus,
+  BookOpenCheck,
+  FileCheck,
+  Home,
+  Handshake,
+} from "lucide-react";
+
 const items = [
-  { title: "VICE PRESIDENT", href: "/VICE-PRESIDENT", icon: User2 },
-  { title: "GENERAL SECRETARY", href: "/GENERAL-SECRETARY", icon: CheckCircle },
-  { title: "FINANCIAL SECRETARY", href: "/FINANCIAL-SECRETARY", icon: LucideHome },
-  { title: "ASSISTANT FINANCIAL SECRETARY", href: "/ASSISTANT-FINANCIAL-SECRETARY", icon: AreaChart },
-  { title: "ORGANIZING SECRETARY", href: "/ORGANIZING-SECRETARY", icon: TableProperties },
-  { title: "TREASURER", href: "/TREASURER", icon: Map },
-  { title: "CO-OPTED MEMBERS", href: "/CO-OPTED-MEMBERS", icon: Tags },
-  { title: "CHAPLAIN/MUSLIM FACTOR", href: "/CHAPLAIN-MUSLIM-FACTOR", icon: Tags },
-  { title: "PROTOCOL", href: "/PROTOCOL", icon: FileCheck },
-  { title: "PORTRESS", href: "/PORTRESS", icon: Home },
-]
+  {
+    title: "VICE PRESIDENT",
+    href: "/VICE-PRESIDENT",
+    icon: ShieldCheck,
+  },
+  {
+    title: "GENERAL SECRETARY",
+    href: "/GENERAL-SECRETARY",
+    icon: ClipboardPen,
+  },
+  {
+    title: "ASSISTANT SECRETARY",
+    href: "/ASSISTANT-SECRETARY",
+    icon: User2,
+  },
+  {
+    title: "FINANCIAL SECRETARY",
+    href: "/FINANCIAL-SECRETARY",
+    icon: Wallet,
+  },
+  {
+    title: "ORGANIZING SECRETARY",
+    href: "/ORGANIZING-SECRETARY",
+    icon: Users,
+  },
+  {
+    title: "ASSISTANT ORGANIZING SEC",
+    href: "/ASSISTANT-ORGANIZING-SEC",
+    icon: UserPlus,
+  },
+  {
+    title: "TREASURER",
+    href: "/TREASURER",
+    icon: Landmark,
+  },
+  {
+    title: "CO-OPTED MEMBERS",
+    href: "/CO-OPTED-MEMBERS",
+    icon: Handshake,
+  },
+  {
+    title: "CHAPLAIN/MUSLIM FACTOR",
+    href: "/CHAPLAIN-MUSLIM-FACTOR",
+    icon: BookOpenCheck,
+  },
+  {
+    title: "PROTOCOL",
+    href: "/PROTOCOL",
+    icon: FileCheck,
+  },
+  {
+    title: "PORTRESS",
+    href: "/PORTRESS",
+    icon: Home,
+  },
+];
+
 
 export default function ManagementCards() {
   const router = useRouter()

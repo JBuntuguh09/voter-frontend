@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label"
 
 export default function WelcomePage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-800 to-blue-600 p-6">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-green-800 to-blue-400 p-6">
       
       <Card className="w-full max-w-md shadow-2xl rounded-2xl">
         <CardContent className="p-8 text-center space-y-6">
@@ -23,7 +23,7 @@ export default function WelcomePage() {
               Welcome to 
             </h1>
             <Label className="flex justify-center text-2xl font-bold text-green-800 text-center w-full ">IMMILAC Aflao</Label>
-<h1 className="text-lg font-bold text-gray-800">
+      <h1 className="text-lg font-bold text-gray-800">
              Voting Portal
             </h1>
             <p className="text-gray-500 text-sm mt-2">
