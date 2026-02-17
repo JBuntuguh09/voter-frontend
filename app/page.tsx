@@ -13,7 +13,7 @@ export default function WelcomePage() {
           
           {/* Logo / Crest */}
           <div className="flex justify-center">
-            <div className="w-16 h-16 bg-blue-700 rounded-full flex items-center justify-center text-white font-bold text-xl">
+            <div className="w-36 h-36 bg-blue-700 rounded-full flex items-center justify-center text-white font-bold text-xl">
               <Image src={'/images/im_logo.jpeg'} alt="logo" width={200} height={200} />
             </div>
           </div>

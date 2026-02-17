@@ -80,6 +80,12 @@ export default function OtpFlowPage() {
     setLoading(true);
     setError("");
 
+    if (phone.trim().length < 10) {
+      toast.error("Please enter a valid phone number");
+      setLoading(false);
+      return;
+    }
+
     try {
       const res = await httpPostAsync("auth/send-otp", { phone });
 
@@ -149,50 +155,49 @@ export default function OtpFlowPage() {
   };
 
   /* ---------------- PASSWORD STRENGTH (PRO) ---------------- */
-function getPasswordStrength(pwd: string) {
-  let score = 0;
+  function getPasswordStrength(pwd: string) {
+    let score = 0;
 
-  const checks = {
-    length: pwd.length >= 8,
-    upper: /[A-Z]/.test(pwd),
-    lower: /[a-z]/.test(pwd),
-    number: /[0-9]/.test(pwd),
-    special: /[^A-Za-z0-9]/.test(pwd),
-  };
+    const checks = {
+      length: pwd.length >= 8,
+      upper: /[A-Z]/.test(pwd),
+      lower: /[a-z]/.test(pwd),
+      number: /[0-9]/.test(pwd),
+      special: /[^A-Za-z0-9]/.test(pwd),
+    };
 
-  Object.values(checks).forEach((v) => v && score++);
+    Object.values(checks).forEach((v) => v && score++);
 
-  let label = "Very Weak";
-  let color = "bg-red-500";
+    let label = "Very Weak";
+    let color = "bg-red-500";
 
-  if (score >= 2) {
-    label = "Weak";
-    color = "bg-orange-500";
+    if (score >= 2) {
+      label = "Weak";
+      color = "bg-orange-500";
+    }
+    if (score >= 3) {
+      label = "Fair";
+      color = "bg-yellow-500";
+    }
+    if (score >= 4) {
+      label = "Strong";
+      color = "bg-green-500";
+    }
+    if (score === 5) {
+      label = "Very Strong";
+      color = "bg-emerald-600";
+    }
+
+    return {
+      score,
+      label,
+      color,
+      checks,
+      percentage: (score / 5) * 100,
+    };
   }
-  if (score >= 3) {
-    label = "Fair";
-    color = "bg-yellow-500";
-  }
-  if (score >= 4) {
-    label = "Strong";
-    color = "bg-green-500";
-  }
-  if (score === 5) {
-    label = "Very Strong";
-    color = "bg-emerald-600";
-  }
 
-  return {
-    score,
-    label,
-    color,
-    checks,
-    percentage: (score / 5) * 100,
-  };
-}
-
-const strengthInfo = getPasswordStrength(password);
-
+  const strengthInfo = getPasswordStrength(password);
 
   /* ---------------- ANIMATION ---------------- */
   const variants = {
@@ -261,7 +266,7 @@ const strengthInfo = getPasswordStrength(password);
       router.push("/login");
     } catch (error: any) {
       console.log(error?.response || error);
-      const message = error?.message || "Registration failed";
+      const message = error?.response?.data?.message || "Registration failed";
       setError(message);
       toast.error(message);
     } finally {
@@ -271,27 +276,37 @@ const strengthInfo = getPasswordStrength(password);
   return (
     <div className="flex min-h-screen">
       {/* LEFT IMAGE (HIDDEN MOBILE) */}
-      <div className="hidden md:flex flex-1 relative">
-        <Image
-          src="/images/pic_2.png"
-          alt="cover"
-          fill
-          className="object-cover"
-        />
+      <div className="hidden lg:flex lg:w-1/2 items-center justify-center ">
+        <div className="relative w-full h-full">
+          <Image
+            src="/images/pic_2.png"
+            alt="cover"
+            fill
+            className="object-cover"
+          />
+        </div>
       </div>
 
       {/* RIGHT PANEL */}
-      <main className="flex-1 bg-green-800 flex items-center justify-center p-4">
+      <main className="flex-1 bg-linear-to-br from-yellow-300 to-green-600 flex items-center justify-center p-4">
         <div className="w-full max-w-md bg-white rounded-2xl p-6 shadow-xl">
           <div className="mb-6 text-center">
-  <h1 className="text-2xl font-bold">
-    {stepContent[step].title}
-  </h1>
-  <p className="text-sm text-gray-500 mt-1">
-    {stepContent[step].subtitle}
-  </p>
-</div>
-
+            <h1 className="text-2xl font-bold">{stepContent[step].title}</h1>
+            {/* Logo / Crest */}
+            <div className="flex justify-center mb-4">
+              <div className="w-36 h-36 bg-blue-700 rounded-full flex items-center justify-center text-white font-bold text-xl">
+                <Image
+                  src={"/images/im_logo.jpeg"}
+                  alt="logo"
+                  width={200}
+                  height={200}
+                />
+              </div>
+            </div>
+            <p className="text-sm text-gray-500 mt-1">
+              {stepContent[step].subtitle}
+            </p>
+          </div>
 
           <AnimatePresence mode="wait">
             {/* ---------------- PHONE STEP ---------------- */}
@@ -305,6 +320,7 @@ const strengthInfo = getPasswordStrength(password);
                 className="space-y-4"
               >
                 <input
+                  disabled={loading}
                   ref={phoneRef}
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
@@ -312,8 +328,9 @@ const strengthInfo = getPasswordStrength(password);
                   className="w-full border rounded-lg p-3"
                 />
                 <button
+                  disabled={loading}
                   onClick={requestOtp}
-                  className="w-full bg-black text-white rounded-lg p-3"
+                  className="w-full bg-green-700 text-white hover:cursor-pointer hover:bg-green-600 rounded-lg p-3"
                 >
                   {loading ? "Sending..." : "Send OTP"}
                 </button>
@@ -406,27 +423,26 @@ const strengthInfo = getPasswordStrength(password);
                 </div>
 
                 {/* Strength Meter */}
-<div className="space-y-2">
-  <div className="flex justify-between text-xs">
-    <span>Password Strength</span>
-    <span className="font-medium">{strengthInfo.label}</span>
-  </div>
+                <div className="space-y-2">
+                  <div className="flex justify-between text-xs">
+                    <span>Password Strength</span>
+                    <span className="font-medium">{strengthInfo.label}</span>
+                  </div>
 
-  <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-    <div
-      className={`h-2 transition-all duration-300 ${strengthInfo.color}`}
-      style={{ width: `${strengthInfo.percentage}%` }}
-    />
-  </div>
+                  <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <div
+                      className={`h-2 transition-all duration-300 ${strengthInfo.color}`}
+                      style={{ width: `${strengthInfo.percentage}%` }}
+                    />
+                  </div>
 
-  <ul className="text-xs text-gray-500 space-y-1 mt-2">
-    <li>• At least 8 characters</li>
-    <li>• Upper & lower case letters</li>
-    <li>• At least one number</li>
-    <li>• At least one special character</li>
-  </ul>
-</div>
-
+                  <ul className="text-xs text-gray-500 space-y-1 mt-2">
+                    <li>• At least 8 characters</li>
+                    <li>• Upper & lower case letters</li>
+                    <li>• At least one number</li>
+                    <li>• At least one special character</li>
+                  </ul>
+                </div>
 
                 {/* CONFIRM PASSWORD */}
                 <div className="relative">
@@ -451,7 +467,8 @@ const strengthInfo = getPasswordStrength(password);
 
                 <button
                   onClick={handleCompleteRegistration}
-                  className="w-full bg-black text-white rounded-lg p-3"
+                  className="w-full bg-green-700 text-white hover:cursor-pointer hover:bg-green-600 rounded-lg p-3"
+                  disabled={loading}
                   //  disabled={loading || password !== confirmPassword || strength < 3}
                 >
                   Complete Registration

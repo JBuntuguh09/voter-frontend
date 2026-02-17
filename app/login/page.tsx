@@ -108,8 +108,10 @@ router.push("/dashboard")
 
   return (
     <div className="flex">
-      <div className="flex-1 bg-amber-700 relative min-h-screen">
-        <Image src={'/images/pic_1.png'} alt="pic_1" fill className="object-cover" />
+      <div className="hidden lg:flex lg:w-1/2 items-center justify-center ">
+        <div className="relative w-full h-full">
+          <Image src={'/images/pic_1.png'} alt="pic_1" fill className="object-cover" />
+        </div>
       </div>
       <main className=" bg-green-800 flex-1 min-h-screen flex items-center justify-center  p-4">
         <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-6 space-y-6">
@@ -120,6 +122,12 @@ router.push("/dashboard")
           )} */}
 
           <form onSubmit={handleLogin} className="space-y-4">
+            {/* Logo / Crest */}
+                      <div className="flex justify-center">
+                        <div className="w-36 h-36 bg-blue-700 rounded-full flex items-center justify-center text-white font-bold text-xl">
+                          <Image src={'/images/im_logo.jpeg'} alt="logo" width={200} height={200} />
+                        </div>
+                      </div>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -146,7 +154,7 @@ router.push("/dashboard")
 
             <Button
               type="submit"
-              className="w-full bg-black text-white rounded-lg p-3"
+              className="w-full bg-green-700 text-white rounded-lg p-3"
               disabled={loading}
             >
               {loading ? "Logging in..." : "Login"}
