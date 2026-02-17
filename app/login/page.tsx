@@ -11,6 +11,8 @@ import Cookies from "js-cookie"
 import { AuthData, AuthResponse } from "../utils/Interface"
 import { clearPermissionCache } from "../utils/permissions"
 import toast from "react-hot-toast"
+import Image from "next/image"
+// import { error } from "console"
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false)
@@ -105,60 +107,53 @@ router.push("/dashboard")
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-6">
-      
-      <Card className="w-full max-w-md shadow-xl rounded-2xl">
-        <CardContent className="p-8 space-y-6">
+    <div className="flex">
+      <div className="flex-1 bg-amber-700 relative min-h-screen">
+        <Image src={'/images/pic_1.png'} alt="pic_1" fill className="object-cover" />
+      </div>
+      <main className=" bg-green-800 flex-1 min-h-screen flex items-center justify-center  p-4">
+        <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-6 space-y-6">
+          <h1 className="text-2xl font-bold text-center">Login</h1>
 
-          <div className="text-center">
-            <h2 className="text-2xl font-bold">Voter Login</h2>
-            <p className="text-gray-500 text-sm">
-              Enter your voter credentials
-            </p>
-          </div>
+          {/* {error && (
+            <p className="text-red-500 text-sm text-center">{error}</p>
+          )} */}
 
           <form onSubmit={handleLogin} className="space-y-4">
-
             <div className="space-y-2">
-              <Label htmlFor="voterId">Voter ID/Email</Label>
+              <Label htmlFor="email">Email</Label>
               <Input
-                id="voterId"
-                placeholder="Enter your email/voter id"
+                id="email"
+                type="email"
+                placeholder="Enter your email"
                 required
                 value={email}
-                onChange={(e)=>setEmail(e.target.value)}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="pin"> Password</Label>
+              <Label htmlFor="password">Password</Label>
               <Input
-                id="pin"
+                id="password"
                 type="password"
-                value={password}
-                onChange={(e)=>setPassword(e.target.value)}
-                placeholder="Enter your Password"
+                placeholder="Enter your password"
                 required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
             </div>
 
             <Button
               type="submit"
-              className="w-full bg-green-700 hover:bg-green-800"
+              className="w-full bg-black text-white rounded-lg p-3"
               disabled={loading}
             >
-              {loading ? "Authenticating..." : "Login Securely"}
+              {loading ? "Logging in..." : "Login"}
             </Button>
-
           </form>
-
-          <div className="text-center text-sm text-gray-500">
-            Need help? Contact Electoral Commission
-          </div>
-
-        </CardContent>
-      </Card>
-
+        </div>
+      </main>
     </div>
   )
 }

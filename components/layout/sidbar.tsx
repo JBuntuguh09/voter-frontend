@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
 import {
@@ -14,6 +14,10 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import Image from "next/image"
+import ConfirmDialog from "../dialogs/ModalSure"
+import { useState } from "react"
+import Cookies from "js-cookie"
+import { clearPermissionCache } from "@/app/utils/permissions"
 
 const navItems = [
   {
@@ -32,14 +36,16 @@ const navItems = [
     icon: BarChart3,
   },
   {
-    name: "Profile",
-    href: "/dashboard/profile",
+    name: "Members",
+    href: "/dashboard/membership",
     icon: User,
   },
 ]
 
 function SidebarContent() {
   const pathname = usePathname()
+  const router = useRouter()
+  const [showConfirm, setshowConfirm] = useState(false)
 
   return (
     <div className="flex flex-col h-full bg-green-900 text-white p-6 space-y-6 w-64">
@@ -72,11 +78,25 @@ function SidebarContent() {
       </nav>
 
       <div className="mt-auto">
-        <button className="flex items-center font-bold gap-3 text-white hover:text-gray-400 cursor-pointer">
+        <button
+        onClick={()=>setshowConfirm(true)}
+        className="flex items-center font-bold gap-3 text-white hover:text-gray-400 cursor-pointer">
           <LogOut size={18} />
           Logout
         </button>
       </div>
+      <ConfirmDialog
+      open={showConfirm}
+      onOpenChange={setshowConfirm}
+      onConfirm={()=>{
+        Cookies.remove("token")
+    Cookies.remove("permissions")
+    localStorage.clear()
+    clearPermissionCache()
+        router.push("/")}
+    }
+      message="Are you sure you want to logout?"
+      />
     </div>
   )
 }

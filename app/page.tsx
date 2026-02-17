@@ -38,9 +38,11 @@ export default function WelcomePage() {
               </Button>
             </Link>
 
-            <Button variant="outline" className="w-full mt-2">
-              Check Registration Status
-            </Button>
+            <Link href="/forgot-password">
+              <Button variant="outline" className="w-full mt-2">
+                Forgot Password?
+              </Button>
+            </Link>
           </div>
 
         </CardContent>

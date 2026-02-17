@@ -194,7 +194,7 @@ export default function DashboardPage() {
         </div>
 
         {/* MAIN GRID */}
-        <div className="grid grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
 
           {/* VOTE CARD */}
           <Card className="rounded-2xl shadow-md">

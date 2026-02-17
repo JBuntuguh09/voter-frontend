@@ -75,6 +75,8 @@ export interface Person {
   lastName: string;
   email: string;
   phoneNumber: string;
+  phoneNumber2: string;
+  title: string;
   organization: Organization | null;
   image: Image | null;
   status: string;
