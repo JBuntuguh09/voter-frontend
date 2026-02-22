@@ -46,3 +46,51 @@ export const BILLING_ICONS = {
   calendar: Calendar,
   create: Plus,
 };
+
+export const items = [
+  {
+    title: "VICE PRESIDENT",
+    href: "/VICE-PRESIDENT",
+  },
+  {
+    title: "GENERAL SECRETARY",
+    href: "/GENERAL-SECRETARY",
+  },
+  {
+    title: "ASSISTANT SECRETARY",
+    href: "/ASSISTANT-SECRETARY",
+  },
+  {
+    title: "FINANCIAL SECRETARY",
+    href: "/FINANCIAL-SECRETARY",
+  },
+  {
+    title: "ORGANIZING SECRETARY",
+    href: "/ORGANIZING-SECRETARY",
+  },
+  {
+    title: "ASSISTANT ORGANIZING SEC",
+    href: "/ASSISTANT-ORGANIZING-SEC",
+  },
+  {
+    title: "TREASURER",
+  },
+  {
+    title: "CO-OPTED MEMBERS",
+    href: "/CO-OPTED-MEMBERS",
+  },
+  {
+    title: "CHAPLAIN/MUSLIM FACTOR",
+    href: "/CHAPLAIN-MUSLIM-FACTOR",
+    
+  },
+  {
+    title: "PROTOCOL",
+    href: "/PROTOCOL",
+  
+  },
+  {
+    title: "PORTRESS",
+    href: "/PORTRESS",
+  },
+];

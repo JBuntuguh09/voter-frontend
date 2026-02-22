@@ -37,10 +37,9 @@ export default function LoginPage() {
             const person = user?.person ?? null;
             restoreSession(res.data)
     } catch (error) {
-        setTimeout(() => {
-      setLoading(false)
-    
-    }, 2000)
+        toast.error("Login failed. Please check your credentials and try again.")
+        console.error("Login error:", error)
+        setLoading(false)
     }
 
     // TODO: Call your API here

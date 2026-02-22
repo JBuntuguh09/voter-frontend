@@ -67,7 +67,21 @@ export interface Role {
   updatedDatetime: string
 }
 
-
+export interface CandidateFormData {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+  position: string;
+  imageBase64: string;
+  userId: number;
+  image?: {
+    id: number;
+    url?: string;
+    base64?: string;
+  } ;
+}
 export interface Person {
   id: number;
   code: string | null;
