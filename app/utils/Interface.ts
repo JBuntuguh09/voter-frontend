@@ -81,6 +81,7 @@ export interface CandidateFormData {
     url?: string;
     base64?: string;
   } ;
+  organization?: Organization | null;
 }
 export interface Person {
   id: number;

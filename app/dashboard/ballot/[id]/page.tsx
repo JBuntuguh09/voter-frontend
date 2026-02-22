@@ -10,29 +10,15 @@ import { Label } from "@/components/ui/label";
 import { useParams, useRouter } from "next/navigation";
 import ConfirmDialog from "@/components/dialogs/ModalSure";
 import toast from "react-hot-toast";
+import { CandidateFormData } from "@/app/utils/Interface";
 
-type Candidate = {
-  id: number;
-  firstName: string;
-  lastName: string;
-  position?: string;
-  email?: string;
-  phoneNumber?: string;
-  organization?: {
-    id: number;
-    name: string;
-  };
-  image?: {
-    id: number;
-    url?: string;
-  };
-};
+
 
 export default function CandidatesPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter()
-  const [data, setData] = useState<Candidate[]>([]);
-  const [selectedCan, setSelectedCan] = useState<Candidate>();
+  const [data, setData] = useState<CandidateFormData[]>([]);
+  const [selectedCan, setSelectedCan] = useState<CandidateFormData>();
   const { httpAuthGetAsync, httpAuthPostAsync } = useRequests();
   const [loading, setLoading] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -160,7 +146,22 @@ export default function CandidatesPage() {
                   cursor-pointer hover:shadow-xl hover:-translate-y-1 bg-white
                   `}
                   >
-                    <User2 size={96} />
+                    <div className="flex flex-col items-center">
+          <label className="block mb-1 font-medium">Profile Image</label>
+          {candidate.image?.base64 ? (
+          <img
+            src={candidate.image.base64}
+            alt="Preview"
+            className="w-32 h-32 object-cover rounded-full border"
+          />
+        ): (
+          <div className="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-medium">
+           
+            <span>No Image</span>
+          </div>
+        )}
+       
+        </div>
                     <div key={candidate.id} className="">
                       <h2 className="font-semibold text-2xl">
                         {candidate.firstName} {candidate.lastName}
