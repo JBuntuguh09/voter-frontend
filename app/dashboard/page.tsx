@@ -129,7 +129,7 @@ export default function DashboardPage() {
             <h2 className="text-2xl font-bold">
              IMMILAC Aflao Election 2026
             </h2>
-            <p className="text-gray-500">
+            <p className="text-gray-700">
               Welcome back, {username}
             </p>
           </div>

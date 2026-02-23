@@ -12,11 +12,9 @@ import ConfirmDialog from "@/components/dialogs/ModalSure";
 import toast from "react-hot-toast";
 import { CandidateFormData } from "@/app/utils/Interface";
 
-
-
 export default function CandidatesPage() {
   const { id } = useParams<{ id: string }>();
-  const router = useRouter()
+  const router = useRouter();
   const [data, setData] = useState<CandidateFormData[]>([]);
   const [selectedCan, setSelectedCan] = useState<CandidateFormData>();
   const { httpAuthGetAsync, httpAuthPostAsync } = useRequests();
@@ -66,13 +64,14 @@ export default function CandidatesPage() {
         organizationId: selectedCan?.organization?.id,
         createdBy: Cookies.get("username") || "admin",
       });
-      
 
-      toast.success(`Successfully voted for ${selectedCan?.firstName} ${selectedCan?.lastName} as ${id}`)
-      router.back()
+      toast.success(
+        `Successfully voted for ${selectedCan?.firstName} ${selectedCan?.lastName} as ${id}`,
+      );
+      router.back();
     } catch (error) {
-      console.log(error)
-      toast.error('Voting failed. Please try again later...')
+      console.log(error);
+      toast.error("Voting failed. Please try again later...");
     } finally {
       setLoading(false);
     }
@@ -147,21 +146,18 @@ export default function CandidatesPage() {
                   `}
                   >
                     <div className="flex flex-col items-center">
-          <label className="block mb-1 font-medium">Profile Image</label>
-          {candidate.image?.base64 ? (
-          <img
-            src={candidate.image.base64}
-            alt="Preview"
-            className="w-32 h-32 object-cover rounded-full border"
-          />
-        ): (
-          <div className="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-medium">
-           
-            <span>No Image</span>
-          </div>
-        )}
-       
-        </div>
+                      {candidate.image?.base64 ? (
+                        <img
+                          src={candidate.image.base64}
+                          alt="Preview"
+                          className="w-32 h-32 object-cover rounded-full border"
+                        />
+                      ) : (
+                        <div className="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-medium">
+                          <span>No Image</span>
+                        </div>
+                      )}
+                    </div>
                     <div key={candidate.id} className="">
                       <h2 className="font-semibold text-2xl">
                         {candidate.firstName} {candidate.lastName}
