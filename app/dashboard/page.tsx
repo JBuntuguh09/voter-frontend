@@ -20,10 +20,12 @@ export default function DashboardPage() {
 
   const username = Cookies.get("username") || ""
 
-  const startDate = Cookies.get("startDate") || ""
+   const startDate = Cookies.get("startDate")?.split("T")[0] || ""
   const startTime = Cookies.get("startTime") || "00:00"
-  const endDate = Cookies.get("endDate") || ""
+  const endDate = Cookies.get("endDate")?.split("T")[0] || ""
   const endTime = Cookies.get("endTime") || "23:59"
+
+  
 
   const [now, setNow] = useState(new Date())
 
@@ -65,15 +67,15 @@ export default function DashboardPage() {
 
   /* ================= PARSE DATES ================= */
 
-  const start = useMemo(
-    () => new Date(`${startDate}`),
-    [startDate, startTime]
-  )
+  const start = useMemo(() => {
+    if (!startDate) return null
+    return new Date(`${startDate}T${startTime}`)
+  }, [startDate, startTime])
 
-  const end = useMemo(
-    () => new Date(`${endDate}`),
-    [endDate, endTime]
-  )
+  const end = useMemo(() => {
+    if (!endDate) return null
+    return new Date(`${endDate}T${endTime}`)
+  }, [endDate, endTime])
 
   /* ================= ELECTION STATUS ================= */
 
@@ -129,7 +131,7 @@ export default function DashboardPage() {
             <h2 className="text-2xl font-bold">
              IMMILAC Aflao Election 2026
             </h2>
-            <p className="text-gray-700">
+            <p className="text-gray-500">
               Welcome back, {username}
             </p>
           </div>
