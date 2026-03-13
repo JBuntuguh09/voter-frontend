@@ -97,7 +97,7 @@ export default function OtpFlowPage() {
       setStep("otp");
     } catch (e: any) {
       console.error("Failed to send OTP", e);
-      toast.error(e.message);
+      toast.error(e?.response?.data?.message+"\n Confirm your name and phone number has been correctly inputed by admin");
       setError(e.message);
     } finally {
       setLoading(false);
@@ -265,8 +265,8 @@ export default function OtpFlowPage() {
       setStep("phone");
       router.push("/login");
     } catch (error: any) {
-      console.log(error?.response || error);
-      const message = error?.response?.data?.message || "Registration failed";
+      console.log(error?.response?.data.message || error);
+      const message = error?.response?.data?.message || "Registration failed.";
       setError(message);
       toast.error(message);
     } finally {
