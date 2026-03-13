@@ -10,7 +10,7 @@ interface CandidateFormData {
   position: string;
   imageBase64: string;
 }
-const items = [
+export const items = [
   {
     title: "VICE PRESIDENT",
     href: "/VICE-PRESIDENT",

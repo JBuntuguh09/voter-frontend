@@ -128,11 +128,11 @@ router.push("/dashboard")
                         </div>
                       </div>
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">Phone Number</Label>
               <Input
                 id="email"
-                type="email"
-                placeholder="Enter your email"
+                type="phone"
+                placeholder="Enter your Phone number"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
