@@ -84,9 +84,9 @@ export default function DashboardPage() {
     // If start or end date is not provided, election has not started
     if (!startDate || !endDate) return "NOT_STARTED"
     // If current time is before the start, not started
-    if (now < start) return "NOT_STARTED"
+    if (start  && now < start) return "NOT_STARTED"
     // If current time is after the end, closed
-    if (now > end) return "CLOSED"
+    if (end && now > end) return "CLOSED"
     return "OPEN"
   }, [now, start, end, startDate, endDate])
 
