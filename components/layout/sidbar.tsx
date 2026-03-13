@@ -56,10 +56,7 @@ function SidebarContent() {
   const isWithinPeriod =
     now && start && end ? now >= start && now <= end : true
 
-    console.log("Now:", now)
-    console.log("Start:", start)
-    console.log("End:", end)
-    console.log("Is Within Period:", isWithinPeriod)
+    
 
   return (
     <div className="flex flex-col h-full bg-green-900 text-white p-6 space-y-6 w-64">

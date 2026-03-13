@@ -219,8 +219,8 @@ export default function OtpFlowPage() {
       toast.error("No person selected. Please request an OTP first.");
       return;
     }
-    if (!email?.trim() || !username?.trim() || !password) {
-      toast.error("Please fill in email, username and password.");
+    if (!password) {
+      toast.error("Please fill in password.");
       return;
     }
     if (password !== confirmPassword) {
@@ -239,8 +239,8 @@ export default function OtpFlowPage() {
         firstName: selectedPerson.firstName,
         lastName: selectedPerson.lastName,
         personId: selectedPerson.id,
-        email: email.trim(),
-        username: username.trim(),
+        email: selectedPerson.phoneNumber.trim()+"@immail.com",
+        username: selectedPerson.phoneNumber.trim(),
         phoneNumber: selectedPerson.phoneNumber,
         organizationId: selectedPerson.organization?.id || 1, // Default to 1 if not available
         status: "Active",
@@ -384,14 +384,14 @@ export default function OtpFlowPage() {
                   Phone: {selectedPerson?.phoneNumber}
                 </Label>
 
-                <input
+                {/* <input
                   placeholder="Email"
                   className="w-full border rounded-lg p-3"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                />
+                /> */}
 
-                <div>
+                {/* <div>
                   <Label className="flex items-center gap-2">
                     Username
                     <button onClick={generateUsername}>
@@ -403,7 +403,7 @@ export default function OtpFlowPage() {
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                   />
-                </div>
+                </div> */}
 
                 {/* PASSWORD */}
                 <div className="relative">
