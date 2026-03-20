@@ -89,7 +89,7 @@ export default function UpdateCandidate() {
         ...prev,
         imageBase64: res.image?.base64 || "",
       }));
-      router.back()
+     // router.back()
 
       setLoading(false);
     } catch (error) {
@@ -137,6 +137,7 @@ export default function UpdateCandidate() {
       const res = await httpAuthPatchAsync(`/candidates/${id}`, body);
       console.log("Updated candidate:", res);
       toast.success("Candidate updated successfully.");
+      router.back()
     } catch (error: any) {
       console.error("Error updating candidate:", error.response.data.message || error.message);
       toast.error("Failed to update candidate. Please try again.");
