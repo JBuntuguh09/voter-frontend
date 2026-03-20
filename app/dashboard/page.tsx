@@ -45,7 +45,7 @@ const items = [
   { title: "ASSISTANT ORGANIZING SEC", href: "/ASSISTANT-ORGANIZING-SEC", icon: UserPlus },
   { title: "TREASURER", href: "/TREASURER", icon: Landmark },
   { title: "CO-OPTED MEMBERS", href: "/CO-OPTED-MEMBERS", icon: Handshake },
-  { title: "CHAPLAIN/MUSLIM FACTOR", href: "/CHAPLAIN-MUSLIM-FACTOR", icon: BookOpenCheck },
+  { title: "CHAPLAIN MUSLIM FACTOR", href: "/CHAPLAIN-MUSLIM-FACTOR", icon: BookOpenCheck },
   { title: "PROTOCOL", href: "/PROTOCOL", icon: FileCheck },
   { title: "PORTRESS", href: "/PORTRESS", icon: Home },
 ]
