@@ -45,6 +45,7 @@ export default function VotesResultPage() {
   const [organizationId, setOrganizationId] = useState(
     Cookies.get("orgId") || "",
   );
+  const population = Number(Cookies.get("population") || "0")
 
   const fetchResults = async () => {
     try {
@@ -54,8 +55,7 @@ export default function VotesResultPage() {
         `/votes/tally?organizationId=${organizationId}&position=${id.id}`,
       );
 
-      console.log("//////", organizationId, id)
-      console.log(res)
+      
    
       setData(res.data || []);
     } catch (e) {
@@ -122,7 +122,7 @@ export default function VotesResultPage() {
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           <div className="inline-block px-6 py-3 rounded-2xl bg-linear-to-r from-indigo-500 to-purple-600 shadow-lg">
             <Label className="text-3xl font-extrabold text-white">
-              Election Results
+              Election Results for {id.id.replaceAll("-", " ")}
             </Label>
           </div>
 
@@ -203,7 +203,8 @@ export default function VotesResultPage() {
               <th className="text-left p-3">Candidate</th>
               <th className="text-left p-3">Position</th>
               <th className="text-left p-3">Votes</th>
-              <th className="text-left p-3">%</th>
+              <th className="text-left p-3">% of Votes</th>
+              <th className="text-left p-3">% of Members</th>
             </tr>
           </thead>
           <tbody>
@@ -219,6 +220,12 @@ export default function VotesResultPage() {
                 <td className="p-3">
                   {totalVotes
                     ? ((r.totalVotes / totalVotes) * 100).toFixed(1)
+                    : 0}
+                  %
+                </td>
+                <td className="p-3">
+                  {population
+                    ? ((r.totalVotes / population) * 100).toFixed(1)
                     : 0}
                   %
                 </td>
