@@ -68,7 +68,7 @@ const downloadPdf = async () => {
     const orgId = Cookies.get("orgId");
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/votes/ranking/pdf/${orgId}`,
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/votes/ranking/pdf/${orgId}`,
       {
         headers: {
           Authorization: `Bearer ${Cookies.get("token")}`,
