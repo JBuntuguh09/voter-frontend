@@ -59,6 +59,38 @@ export default function ResultsCards() {
   const [showPopup, setShowPopup] = useState(false)
   const [totalVoters, setTotalVoters] = useState(0)
 
+  const [downloading, setDownloading] = useState(false);
+
+const downloadPdf = async () => {
+  try {
+    setDownloading(true);
+
+    const orgId = Cookies.get("orgId");
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/votes/ranking/pdf/${orgId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${Cookies.get("token")}`,
+        },
+      }
+    );
+
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "election-results.pdf";
+    a.click();
+
+    window.URL.revokeObjectURL(url);
+  } catch (err) {
+    console.error(err);
+  } finally {
+    setDownloading(false);
+  }
+};
   useEffect(() => {
     let mounted = true
 
@@ -127,6 +159,12 @@ export default function ResultsCards() {
             >
               View Breakdown
             </Badge>
+            <Badge
+  className="bg-purple-100 text-purple-700 px-4 py-2 cursor-pointer"
+  onClick={downloadPdf}
+>
+  {downloading ? "Generating PDF..." : "Download PDF"}
+</Badge>
           </div>
         </motion.div>
 
