@@ -8,6 +8,21 @@ import useRequests from "../utils/UseRequests"
 import { useEffect, useMemo, useState } from "react"
 import Cookies from "js-cookie"
 import { useRouter } from "next/navigation"
+import {
+  User2,
+  ShieldCheck,
+  Wallet,
+  ClipboardPen,
+  Users,
+  Landmark,
+  UserPlus,
+  BookOpenCheck,
+  FileCheck,
+  Home,
+  Handshake,
+} from "lucide-react"
+import jsPDF from "jspdf"
+import autoTable from "jspdf-autotable"
 
 type ElectionState = "NOT_STARTED" | "OPEN" | "CLOSED"
 
@@ -21,12 +36,27 @@ type WinnerItem = {
   status: "Winner" | "Draw",
   imageBase64: string,
 }
+const items = [
+  { title: "VICE PRESIDENT", href: "/VICE-PRESIDENT", icon: ShieldCheck },
+  { title: "GENERAL SECRETARY", href: "/GENERAL-SECRETARY", icon: ClipboardPen },
+  { title: "ASSISTANT SECRETARY", href: "/ASSISTANT-SECRETARY", icon: User2 },
+  { title: "FINANCIAL SECRETARY", href: "/FINANCIAL-SECRETARY", icon: Wallet },
+  { title: "ORGANIZING SECRETARY", href: "/ORGANIZING-SECRETARY", icon: Users },
+  { title: "ASSISTANT ORGANIZING SEC", href: "/ASSISTANT-ORGANIZING-SEC", icon: UserPlus },
+  { title: "TREASURER", href: "/TREASURER", icon: Landmark },
+  { title: "CO-OPTED MEMBERS", href: "/CO-OPTED-MEMBERS", icon: Handshake },
+  { title: "CHAPLAIN/MUSLIM FACTOR", href: "/CHAPLAIN-MUSLIM-FACTOR", icon: BookOpenCheck },
+  { title: "PROTOCOL", href: "/PROTOCOL", icon: FileCheck },
+  { title: "PORTRESS", href: "/PORTRESS", icon: Home },
+]
 
 type WinnerGroup = {
   position: string
   resultType: "Winner" | "Draw"
   winners: WinnerItem[]
 }
+const normalize = (val: string) =>
+  val?.replace(/\s+/g, "-").toUpperCase()
 
 export default function DashboardPage() {
   const router = useRouter()
@@ -170,6 +200,88 @@ export default function DashboardPage() {
     }
   }, [electionState, organizationId])
 
+  const orderedWinners = items.map((item) => {
+  return winners.find(
+    (w) => normalize(w.position) === normalize(item.title)
+  )
+})
+
+
+
+const downloadWinnersPDF = () => {
+  const doc = new jsPDF()
+
+  // TITLE
+  doc.setFontSize(18)
+  doc.text("Election Winners Report", 14, 20)
+
+  doc.setFontSize(11)
+  doc.text(` IMMILAC Aflao`, 14, 28)
+  doc.text(`Date: ${new Date().toLocaleString()}`, 14, 34)
+
+  let startY = 40
+
+  orderedWinners.forEach((group, index) => {
+    const positionTitle = items[index].title
+
+    // SECTION TITLE
+    doc.setFontSize(13)
+    doc.text(positionTitle, 14, startY)
+
+    startY += 4
+
+    if (!group) {
+      doc.setFontSize(10)
+      doc.text("No results available", 14, startY + 6)
+      startY += 12
+      return
+    }
+
+    // TABLE DATA
+    const tableData = group.winners.map((winner, i) => [
+      winner.status === "Winner" ? "🥇" : "🥈",
+      winner.candidateName,
+      winner.voteCount,
+      winner.status,
+    ])
+
+    autoTable(doc, {
+      startY: startY + 4,
+      head: [["Rank", "Candidate", "Votes", "Status"]],
+      body: tableData,
+      theme: "grid",
+      styles: {
+        fontSize: 10,
+        cellPadding: 3,
+      },
+      headStyles: {
+        fillColor: [22, 160, 133], // emerald
+      },
+    })
+
+    startY = (doc as any).lastAutoTable.finalY + 10
+
+    // DRAW NOTE
+    if (group.resultType === "Draw") {
+      doc.setFontSize(9)
+      doc.text(
+        "Draw: Multiple candidates have equal highest votes",
+        14,
+        startY
+      )
+      startY += 8
+    }
+
+    // PAGE BREAK
+    if (startY > 260) {
+      doc.addPage()
+      startY = 20
+    }
+  })
+
+  doc.save("election-winners.pdf")
+}
+
   return (
     <div className="min-h-screen flex bg-gray-100">
       <Sidebar />
@@ -295,9 +407,18 @@ export default function DashboardPage() {
           </p>
         </div>
 
-        <Badge className="bg-gradient-to-r from-emerald-600 to-green-500 text-white px-4 py-2 shadow">
-          Final Results
-        </Badge>
+       <div className="flex items-center gap-3">
+  <Badge className="bg-gradient-to-r from-emerald-600 to-green-500 text-white px-4 py-2 shadow">
+    Final Results
+  </Badge>
+
+  <Button
+    onClick={downloadWinnersPDF}
+    className="bg-indigo-600 hover:bg-indigo-700 text-white"
+  >
+    Download PDF
+  </Button>
+</div>
       </div>
 
       {/* CONTENT */}
@@ -311,122 +432,111 @@ export default function DashboardPage() {
         </div>
       ) : (
         <div className="space-y-6">
-          {winners.map((group, i) => (
-            <div
-              key={group.position}
-              className="rounded-2xl border bg-white shadow-sm p-5 transition hover:shadow-lg animate-fade-in"
-              style={{ animationDelay: `${i * 0.1}s` }}
-            >
-              {/* POSITION HEADER */}
-              <div className="flex items-center justify-between mb-4">
-                <h4 className="font-semibold text-lg text-gray-800">
-                  {group.position}
-                </h4>
+          {orderedWinners.map((group, i) => (
+  <div
+    key={group?.position || items[i].title}
+    className="rounded-2xl border bg-white shadow-sm p-5 transition hover:shadow-lg animate-fade-in"
+    style={{ animationDelay: `${i * 0.08}s` }}
+  >
+    {/* POSITION HEADER */}
+    <div className="flex items-center justify-between mb-4">
+      <h4 className="font-semibold text-lg text-gray-800">
+        {items[i].title}
+      </h4>
 
-                <Badge
-                  className={
-                    group.resultType === "Winner"
-                      ? "bg-green-100 text-green-700"
-                      : "bg-yellow-100 text-yellow-700"
-                  }
-                >
-                  {group.resultType === "Winner" ? "Winner" : "Draw"}
-                </Badge>
-              </div>
-
-              {/* TABLE */}
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="text-gray-500 text-xs uppercase">
-                      <th className="text-left py-2">Rank</th>
-                      <th className="text-left py-2">Candidate</th>
-                      <th className="text-left py-2">Votes</th>
-                      <th className="text-left py-2">Status</th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    {group.winners.map((winner, index) => (
-                      <tr
-                        key={winner.candidateId}
-                        className={`rounded-xl transition-all duration-300 ${
-                          winner.status === "Winner"
-                            ? "bg-green-50 hover:bg-green-100"
-                            : "bg-yellow-50 hover:bg-yellow-100"
-                        }`}
-                      >
-                        {/* RANK / MEDAL */}
-                        <td className="py-4 font-semibold">
-                          {winner.status === "Winner" ? (
-                            <span className="text-xl">🥇</span>
-                          ) : (
-                            <span className="text-lg">🥈</span>
-                          )}
-                        </td>
-
-                        <td className="py-4">
-  <div className="flex items-center gap-3">
-    
-    {/* AVATAR */}
-    {winner.imageBase64 ? (
-      <img
-        src={winner.imageBase64}
-        alt={winner.candidateName}
-        className="h-10 w-10 rounded-full object-cover border shadow-sm transition-transform duration-300 hover:scale-110"
-      />
-    ) : (
-      <div className="h-10 w-10 rounded-full bg-indigo-600 text-white flex items-center justify-center font-semibold shadow">
-        {winner.firstName?.[0]}
-        {winner.lastName?.[0]}
-      </div>
-    )}
-
-    {/* NAME */}
-    <div className="flex flex-col">
-      <span className="font-medium text-gray-800">
-        {winner.candidateName}
-      </span>
-      {winner.code && (
-        <span className="text-xs text-gray-500">
-          {winner.code}
-        </span>
+      {group && (
+        <Badge
+          className={
+            group.resultType === "Winner"
+              ? "bg-green-100 text-green-700"
+              : "bg-yellow-100 text-yellow-700"
+          }
+        >
+          {group.resultType}
+        </Badge>
       )}
     </div>
+
+    {/* IF NO DATA */}
+    {!group ? (
+      <div className="text-gray-400 text-sm italic">
+        No results available for this position.
+      </div>
+    ) : (
+      <>
+        {/* TABLE */}
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="text-gray-500 text-xs uppercase">
+                <th className="text-left py-2">Rank</th>
+                <th className="text-left py-2">Candidate</th>
+                <th className="text-left py-2">Votes</th>
+                <th className="text-left py-2">Status</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {group.winners.map((winner) => (
+                <tr
+                  key={winner.candidateId}
+                  className={`transition ${
+                    winner.status === "Winner"
+                      ? "bg-green-50"
+                      : "bg-yellow-50"
+                  }`}
+                >
+                  <td className="py-3">
+                    {winner.status === "Winner" ? "🥇" : "🥈"}
+                  </td>
+
+                  <td className="py-3">
+                    <div className="flex items-center gap-3">
+                      {winner.imageBase64 ? (
+                        <img
+                          src={winner.imageBase64}
+                          className="h-9 w-9 rounded-full object-cover"
+                        />
+                      ) : (
+                        <div className="h-9 w-9 rounded-full bg-indigo-600 text-white flex items-center justify-center text-sm">
+                          {winner.firstName?.[0]}
+                          {winner.lastName?.[0]}
+                        </div>
+                      )}
+                      <span>{winner.candidateName}</span>
+                    </div>
+                  </td>
+
+                  <td className="py-3 font-semibold">
+                    {winner.voteCount}
+                  </td>
+
+                  <td>
+                    <Badge
+                      className={
+                        winner.status === "Winner"
+                          ? "bg-green-600 text-white"
+                          : "bg-yellow-500 text-white"
+                      }
+                    >
+                      {winner.status}
+                    </Badge>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {group.resultType === "Draw" && (
+          <div className="mt-3 text-xs text-yellow-700 bg-yellow-100 px-3 py-2 rounded">
+            ⚖️ Draw — candidates have equal highest votes
+          </div>
+        )}
+      </>
+    )}
   </div>
-</td>
-
-                        {/* VOTES */}
-                        <td className="py-4 font-semibold text-gray-700">
-                          {winner.voteCount}
-                        </td>
-
-                        {/* STATUS */}
-                        <td className="py-4">
-                          <Badge
-                            className={
-                              winner.status === "Winner"
-                                ? "bg-green-600 text-white"
-                                : "bg-yellow-500 text-white"
-                            }
-                          >
-                            {winner.status}
-                          </Badge>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-
-              {/* DRAW NOTICE */}
-              {group.resultType === "Draw" && (
-                <div className="mt-4 text-xs text-yellow-700 bg-yellow-100 px-4 py-2 rounded-lg">
-                  ⚖️ This position resulted in a draw. Multiple candidates have the highest votes.
-                </div>
-              )}
-            </div>
-          ))}
+))}
         </div>
       )}
     </CardContent>
