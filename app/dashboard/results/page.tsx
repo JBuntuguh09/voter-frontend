@@ -251,11 +251,11 @@ export default function ResultsCards() {
                   <CardContent>
                     {alreadyVoted ? (
                       <p className="text-sm text-green-600">
-                        Your vote has been recorded.
+                        Your vote has been recorded. Click to view results.
                       </p>
                     ) : (
                       <p className="text-sm text-gray-600">
-                        Click to cast your vote.
+                        Click to view results.
                       </p>
                     )}
                   </CardContent>

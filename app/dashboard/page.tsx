@@ -15,6 +15,7 @@ export default function DashboardPage() {
   const router = useRouter()
   const { httpAuthGetAsync } = useRequests()
   const userId = Cookies.get("userId") || ""
+  const organizationId = Cookies.get("orgId") || ""
 
   const [loading, setLoading] = useState(true)
   const [voted, setVoted] = useState(0)
@@ -30,11 +31,31 @@ export default function DashboardPage() {
 
   const [now, setNow] = useState(new Date())
 
+  const getPopulationTotal = async (page = 1) => {
+    try {
+      const params = new URLSearchParams({
+        status: "Active",
+        organizationId: organizationId ?? "",
+      });
+
+      const res = await httpAuthGetAsync(
+        `/person?${params.toString()}`
+      );
+
+      Cookies.set("population", res.data?.total ?? "0");
+     
+    } catch {
+     Cookies.set("population",  "0");
+    } 
+  };
+
   /* ================= CLOCK ================= */
   useEffect(() => {
+    getPopulationTotal()
     const timer = setInterval(() => setNow(new Date()), 1000)
     return () => clearInterval(timer)
   }, [])
+
 
   /* ================= FETCH VOTES ================= */
   useEffect(() => {
@@ -64,6 +85,7 @@ export default function DashboardPage() {
     return () => {
       mounted = false
     }
+    
   }, [])
 
   /* ================= PARSE DATES ================= */
@@ -115,6 +137,9 @@ export default function DashboardPage() {
 
   const canVote = electionState === "OPEN"
   const canView = electionState === "OPEN" || electionState === "CLOSED"
+
+
+  
 
   /* ================= UI ================= */
 
