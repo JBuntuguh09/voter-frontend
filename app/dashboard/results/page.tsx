@@ -1,6 +1,5 @@
 "use client"
-
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import {
   Card,
   CardHeader,
@@ -13,6 +12,8 @@ import { Sidebar } from "@/components/layout/sidbar"
 import { Label } from "@/components/ui/label"
 import useRequests from "@/app/utils/UseRequests"
 import { useEffect, useMemo, useState } from "react"
+import Cookies from "js-cookie"
+import { X } from "lucide-react"
 
 import {
   User2,
@@ -26,244 +27,197 @@ import {
   FileCheck,
   Home,
   Handshake,
-} from "lucide-react";
+} from "lucide-react"
+
+type PositionStats = {
+  position: string
+  votes: number
+  totalVoters: number
+}
 
 const items = [
-  {
-    title: "VICE PRESIDENT",
-    href: "/VICE-PRESIDENT",
-    icon: ShieldCheck,
-  },
-  {
-    title: "GENERAL SECRETARY",
-    href: "/GENERAL-SECRETARY",
-    icon: ClipboardPen,
-  },
-  {
-    title: "ASSISTANT SECRETARY",
-    href: "/ASSISTANT-SECRETARY",
-    icon: User2,
-  },
-  {
-    title: "FINANCIAL SECRETARY",
-    href: "/FINANCIAL-SECRETARY",
-    icon: Wallet,
-  },
-  {
-    title: "ORGANIZING SECRETARY",
-    href: "/ORGANIZING-SECRETARY",
-    icon: Users,
-  },
-  {
-    title: "ASSISTANT ORGANIZING SEC",
-    href: "/ASSISTANT-ORGANIZING-SEC",
-    icon: UserPlus,
-  },
-  {
-    title: "TREASURER",
-    href: "/TREASURER",
-    icon: Landmark,
-  },
-  {
-    title: "CO-OPTED MEMBERS",
-    href: "/CO-OPTED-MEMBERS",
-    icon: Handshake,
-  },
-  {
-    title: "CHAPLAIN/MUSLIM FACTOR",
-    href: "/CHAPLAIN-MUSLIM-FACTOR",
-    icon: BookOpenCheck,
-  },
-  {
-    title: "PROTOCOL",
-    href: "/PROTOCOL",
-    icon: FileCheck,
-  },
-  {
-    title: "PORTRESS",
-    href: "/PORTRESS",
-    icon: Home,
-  },
-];
-
+  { title: "VICE PRESIDENT", href: "/VICE-PRESIDENT", icon: ShieldCheck },
+  { title: "GENERAL SECRETARY", href: "/GENERAL-SECRETARY", icon: ClipboardPen },
+  { title: "ASSISTANT SECRETARY", href: "/ASSISTANT-SECRETARY", icon: User2 },
+  { title: "FINANCIAL SECRETARY", href: "/FINANCIAL-SECRETARY", icon: Wallet },
+  { title: "ORGANIZING SECRETARY", href: "/ORGANIZING-SECRETARY", icon: Users },
+  { title: "ASSISTANT ORGANIZING SEC", href: "/ASSISTANT-ORGANIZING-SEC", icon: UserPlus },
+  { title: "TREASURER", href: "/TREASURER", icon: Landmark },
+  { title: "CO-OPTED MEMBERS", href: "/CO-OPTED-MEMBERS", icon: Handshake },
+  { title: "CHAPLAIN/MUSLIM FACTOR", href: "/CHAPLAIN-MUSLIM-FACTOR", icon: BookOpenCheck },
+  { title: "PROTOCOL", href: "/PROTOCOL", icon: FileCheck },
+  { title: "PORTRESS", href: "/PORTRESS", icon: Home },
+]
 
 export default function ResultsCards() {
   const router = useRouter()
   const { httpAuthGetAsync } = useRequests()
-
-  const electionOpen = true
+  const population = Number(Cookies.get("population") || "0")
 
   const [loading, setLoading] = useState(true)
-  const [votedPositions, setVotedPositions] = useState<Set<string>>(new Set())
+  const [voterStats, setVoterStats] = useState<PositionStats[]>([])
+  const [showPopup, setShowPopup] = useState(false)
+  const [totalVoters, setTotalVoters] = useState(0)
 
-  /* ================= FETCH VOTES ================= */
   useEffect(() => {
     let mounted = true
 
     const fetchVotes = async () => {
       try {
         setLoading(true)
+        const res = await httpAuthGetAsync("voted/stats/" + Cookies.get("orgId"))
+        const apiData = res?.data?.byPosition || []
+        console.log("res", res)
 
-        const res = await httpAuthGetAsync("voted")
-        const data = res?.data?.data || []
+        if (!mounted) return
 
-        console.log("data", data)
-        const positions = new Set<string>()
+        const totalVotersCount = res?.data?.totalUniqueVoters || 0
 
-        data.forEach((entry: any) => {
-          const pos = entry?.position ?? entry?.title
-          if (pos) positions.add(pos)
+        // Map API data to items order
+        const stats = items.map((item) => {
+          const stat = apiData.find((d: any) => d.position === item.href.replace("/", ""))
+          return {
+            position: item.title,
+            votes: stat ? Number(stat.totalVoters) : 0,
+            totalVoters: population,
+          }
         })
 
-      
-     //   if (mounted) setVotedPositions(positions)
-      } catch (error) {
-        console.error(error)
+        setVoterStats(stats)
+        setTotalVoters(totalVotersCount)
+      } catch (err) {
+        console.error(err)
       } finally {
         if (mounted) setLoading(false)
       }
     }
 
     fetchVotes()
-
     return () => {
       mounted = false
     }
   }, [])
 
-  /* ================= MEMO VALUES ================= */
-
-  const total = items.length
-
-  const votedCount = useMemo(
-    () =>
-      items.filter((i) => votedPositions.has(i.href.replace("/", ""))).length,
-    [votedPositions]
-  )
-
-  const progress = useMemo(
-    () => (votedCount / total) * 100,
-    [votedCount, total]
-  )
-
-  /* ================= LOADING UI ================= */
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex bg-slate-50">
-        <Sidebar />
-        <main className="flex-1 p-10 space-y-6">
-          <Label className="text-3xl font-bold">RESULTS</Label>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <Card key={i} className="rounded-2xl p-6 animate-pulse">
-                <div className="h-6 w-2/3 bg-gray-200 rounded mb-3" />
-                <div className="h-4 w-1/2 bg-gray-200 rounded" />
-              </Card>
-            ))}
-          </div>
-        </main>
-      </div>
-    )
-  }
+  const percentage = useMemo(() => {
+    if (!population) return 0
+    return Math.round((totalVoters / population) * 100)
+  }, [totalVoters, population])
 
   return (
-    <div className="min-h-screen flex bg-linear-to-br from-slate-50 via-white to-slate-100">
+    <div className="min-h-screen flex bg-slate-50">
       <Sidebar />
-
       <main className="flex-1 p-10 space-y-8">
 
         {/* HEADER */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-          <div className="inline-block px-6 py-3 rounded-2xl bg-linear-to-r from-green-500 to-purple-600 shadow-lg">
-            <Label className="text-3xl font-extrabold text-white">
-              RESULTS
-            </Label>
+          <div className="inline-block px-6 py-3 rounded-2xl bg-gradient-to-r from-green-500 to-purple-600 shadow-lg">
+            <Label className="text-3xl font-extrabold text-white">Election Results</Label>
           </div>
 
-          <p className="text-gray-600 mt-3">
-            Select and vote for each position below.
-          </p>
+          <p className="text-gray-600 mt-3">Click a card to see detailed breakdown.</p>
 
-          <Badge className="bg-green-100 text-green-700 border mt-2">
-            Election Open
-          </Badge>
+          <div className="flex items-center gap-6 mt-4">
+            <Badge className="bg-indigo-100 text-indigo-700 px-4 py-2">
+              Total Voters: {totalVoters} / {population} ({percentage}%)
+            </Badge>
 
-          {/* Progress */}
-          {/* <div className="mt-4">
-            <div className="flex justify-between text-sm text-gray-600">
-              <span>Voting Progress</span>
-              <span>{votedCount}/{total}</span>
-            </div>
-
-            <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden mt-2">
-              <motion.div
-                initial={{ width: 0 }}
-                animate={{ width: `${progress}%` }}
-                className="h-full bg-linear-to-r from-indigo-500 to-purple-500"
-              />
-            </div>
-          </div> */}
+            <Badge
+              className="bg-green-100 text-green-700 px-4 py-2 cursor-pointer hover:scale-105 transition-transform"
+              onClick={() => setShowPopup(true)}
+            >
+              View Breakdown
+            </Badge>
+          </div>
         </motion.div>
 
-        {/* GRID */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-          {items.map((item, i) => {
+        {/* Voter Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 mt-6">
+          {items.map((item, idx) => {
+            const stat = voterStats.find((v) => v.position === item.title)
+            const votes = stat?.votes || 0
             const Icon = item.icon
-            const alreadyVoted = votedPositions.has(item.href.replace("/", ""))
-            const disabled = !electionOpen || alreadyVoted
-
             return (
               <motion.div
                 key={item.title}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.05 }}
-                whileHover={!disabled ? { y: -4 } : {}}
+                transition={{ delay: idx * 0.05 }}
               >
                 <Card
-                  onClick={() =>
-                    !disabled &&
-                    router.push("/dashboard/results/" + item.href)
-                  }
-                  className={`rounded-2xl transition-all
-                    ${disabled
-                      ? "bg-gray-100 opacity-70 cursor-not-allowed"
-                      : "cursor-pointer hover:shadow-xl hover:border-indigo-300"
-                    }`}
+                  className="rounded-2xl shadow-lg hover:shadow-2xl transition-all cursor-pointer"
+                  onClick={() => router.push(`/dashboard/results/${item.href}`)}
                 >
-                  <CardHeader className="flex flex-row items-center gap-4">
-                    <div className="p-3 rounded-xl bg-indigo-100">
-                      <Icon className="h-7 w-7 text-indigo-600" />
-                    </div>
-
-                    <div>
+                  <CardHeader className="flex justify-between items-center">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 rounded-xl bg-indigo-100">
+                        <Icon className="h-6 w-6 text-indigo-700" />
+                      </div>
                       <CardTitle>{item.title}</CardTitle>
-                      {alreadyVoted && (
-                        <Badge className="mt-1 bg-blue-100 text-blue-700">
-                          Already Voted
-                        </Badge>
-                      )}
                     </div>
+                    <Badge className="bg-indigo-100 text-indigo-700">{votes} votes</Badge>
                   </CardHeader>
-
                   <CardContent>
-                    {alreadyVoted ? (
-                      <p className="text-sm text-green-600">
-                        Your vote has been recorded. Click to view results.
-                      </p>
-                    ) : (
-                      <p className="text-sm text-gray-600">
-                        Click to view results.
-                      </p>
-                    )}
+                    <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden mt-2">
+                      <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: `${Math.round((votes / population) * 100)}%` }}
+                        className="h-full bg-gradient-to-r from-indigo-500 to-purple-500"
+                      />
+                    </div>
+                    <p className="text-sm text-gray-600 mt-2">
+                      Percentage: {Math.round((votes / population) * 100)}%
+                    </p>
                   </CardContent>
                 </Card>
               </motion.div>
             )
           })}
         </div>
+
+        {/* BREAKDOWN POPUP */}
+        <AnimatePresence>
+          {showPopup && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+            >
+              <motion.div
+                initial={{ scale: 0.8 }}
+                animate={{ scale: 1 }}
+                exit={{ scale: 0.8 }}
+                className="bg-white rounded-2xl p-6 w-11/12 max-w-2xl shadow-2xl relative"
+              >
+                <button
+                  className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
+                  onClick={() => setShowPopup(false)}
+                >
+                  <X />
+                </button>
+
+                <h3 className="text-2xl font-bold mb-4">Voter Breakdown by Position</h3>
+                <div className="space-y-3">
+                  {items.map((item) => {
+                    const stat = voterStats.find((v) => v.position === item.title)
+                   
+                    const votes = stat?.votes || 0
+                    return (
+                      <div
+                        key={item.title}
+                        className="flex justify-between bg-gray-100 rounded-xl px-4 py-2"
+                      >
+                        <span>{item.title}</span>
+                        <span>{votes} votes ({Math.round((votes / population) * 100)}%)</span>
+                      </div>
+                    )
+                  })}
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
       </main>
     </div>
   )
