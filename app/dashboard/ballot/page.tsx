@@ -1,6 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
+import Cookies from "js-cookie"
 import {
   Card,
   CardHeader,
@@ -90,6 +91,7 @@ const items = [
 export default function ManagementCards() {
   const router = useRouter()
   const { httpAuthGetAsync } = useRequests()
+  const userId = Cookies.get("userId") || ""
 
   const electionOpen = true
 
@@ -104,7 +106,7 @@ export default function ManagementCards() {
       try {
         setLoading(true)
 
-        const res = await httpAuthGetAsync("voted")
+        const res = await httpAuthGetAsync("voted?userId="+userId)
         const data = res?.data?.data || []
 
         console.log("data", data)

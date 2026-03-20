@@ -14,6 +14,7 @@ type ElectionState = "NOT_STARTED" | "OPEN" | "CLOSED"
 export default function DashboardPage() {
   const router = useRouter()
   const { httpAuthGetAsync } = useRequests()
+  const userId = Cookies.get("userId") || ""
 
   const [loading, setLoading] = useState(true)
   const [voted, setVoted] = useState(0)
@@ -44,7 +45,7 @@ export default function DashboardPage() {
         
         setLoading(true)
 
-        const res = await httpAuthGetAsync("voted")
+        const res = await httpAuthGetAsync("voted?userId="+userId)
         const data = res?.data?.data || []
 
         const positions = new Set<string>()

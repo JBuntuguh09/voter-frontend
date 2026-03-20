@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, ChangeEvent, FormEvent } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import useRequests from "@/app/utils/UseRequests";
 import Cookies from "js-cookie";
 import toast from "react-hot-toast";
@@ -62,6 +62,7 @@ export default function UpdateCandidate() {
   const { httpAuthGetAsync, httpAuthPostAsync, httpAuthPatchAsync } = useRequests();
   const [error, setError] = useState<string | null>(null);
   const orgId = Cookies.get("orgId") || "";
+  const router = useRouter()
   const [form, setForm] = useState<CandidateFormData>({
     id: 0,
     firstName: "",
@@ -88,6 +89,7 @@ export default function UpdateCandidate() {
         ...prev,
         imageBase64: res.image?.base64 || "",
       }));
+      router.back()
 
       setLoading(false);
     } catch (error) {
